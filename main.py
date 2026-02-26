@@ -23,6 +23,9 @@ def translate_text(data: dict):
     source = data.get("source")
     target = data.get("target")
 
+    if not text or not source or not target:
+        return {"error": "Missing required fields"}
+
     url = "https://translate.googleapis.com/translate_a/single"
 
     params = {
@@ -33,10 +36,20 @@ def translate_text(data: dict):
         "q": text
     }
 
-    response = requests.get(url, params=params)
+    try:
+        response = requests.get(url, params=params)
 
-    result = response.json()
+        if response.status_code != 200:
+            return {"error": "Translation API failed", "details": response.text}
 
-    translated_text = result[0][0][0]
+        try:
+            result = response.json()
+        except Exception:
+            return {"error": "Invalid response from translation API"}
 
-    return {"translatedText": translated_text}
+        translated_text = result[0][0][0]
+
+        return {"translatedText": translated_text}
+
+    except Exception as e:
+        return {"error": str(e)}
