@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 import requests
 
 app = FastAPI()
@@ -13,27 +14,26 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+class TranslateRequest(BaseModel):
+    text: str
+    source: str
+    target: str
+
 @app.get("/")
 def home():
     return {"message": "AI Translator Backend Running"}
 
 @app.post("/translate")
-def translate_text(data: dict):
-    text = data.get("text")
-    source = data.get("source")
-    target = data.get("target")
-
-    if not text or not source or not target:
-        return {"error": "Missing required fields"}
+def translate_text(data: TranslateRequest):
 
     url = "https://translate.googleapis.com/translate_a/single"
 
     params = {
         "client": "gtx",
-        "sl": source,
-        "tl": target,
+        "sl": data.source,
+        "tl": data.target,
         "dt": "t",
-        "q": text
+        "q": data.text
     }
 
     try:
