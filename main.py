@@ -47,7 +47,7 @@ def translate_text(data: TranslateRequest):
         except Exception:
             return {"error": "Invalid response from translation API"}
 
-        translated_text = result[0][0][0]
+        translated_text = "".join([item[0] for item in result[0]])
 
         return {"translatedText": translated_text}
 
