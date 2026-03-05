@@ -21,7 +21,7 @@ class TranslateRequest(BaseModel):
 
 @app.get("/")
 def home():
-    return {"message": "AI Translator Backend Running"}
+    return {"message": "AI Translation Backend Running"}
 
 @app.post("/translate")
 def translate_text(data: TranslateRequest):
